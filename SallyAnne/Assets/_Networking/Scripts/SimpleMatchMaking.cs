@@ -15,7 +15,8 @@ using UnityEngine;
 
 public class SimpleMatchMaking : MonoBehaviour
 {
-    [SerializeField] private GameObject m_buttons;
+    [SerializeField] private GameObject m_lobbyUIButtons;
+    [SerializeField] private GameManager m_gameManager;
     [SerializeField] private int m_maxPlayers = 2;
 
     private Lobby _connectedLobby;
@@ -41,10 +42,13 @@ public class SimpleMatchMaking : MonoBehaviour
 
         _connectedLobby = await QuickJoinLobby() ?? await CreateLobby();
 
-        if (_connectedLobby != null)
+        if (_connectedLobby == null)
         {
-            m_buttons.SetActive(false);
+            return;
         }
+
+        m_lobbyUIButtons.SetActive(false);
+        m_gameManager.StartGame();
     }
 
 
