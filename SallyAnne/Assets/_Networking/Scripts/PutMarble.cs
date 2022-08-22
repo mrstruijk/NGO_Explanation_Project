@@ -36,6 +36,12 @@ public class PutMarble : NetworkBehaviour
             MakeOwner();
         }
 
+        MovePosition();
+    }
+
+    //TODO: Make sure this happens immediately on all clients.
+    private void MovePosition()
+    {
         Marble.transform.position = transform.position;
         _rigidbody.velocity = new Vector3(0, 0, 0);
         _rigidbody.angularVelocity = new Vector3(0, 0, 0);
