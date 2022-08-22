@@ -25,7 +25,6 @@ public class SimpleMatchMaking : MonoBehaviour
     private const string JoinCodeKey = "j";
 
 
-
     private void Awake()
     {
         _transport = FindObjectOfType<UnityTransport>();
