@@ -9,8 +9,11 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
+/[Qq]uestBuilds
+/_[Qq]uestBuilds
 
-# Asset meta data should only be ignored when the corresponding asset is also ignored
+
+# Never ignore Asset meta data
 !/[Aa]ssets/**/*.meta
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
@@ -52,9 +55,56 @@ ExportedObj/
 sysinfo.txt
 
 # Builds
-*.apk
+# *.apk
 *.unitypackage
 
 # Crashlytics generated file
 crashlytics-build.properties
 
+
+# Maarten Folders: (# A starting /, such as in /[Bb]uilds/, will only look in the root directory...)
+[Bb]uild/
+[Bb]uilds/
+_[Bb]uilds/
+_MacBuilds/
+_ProfilerData/
+LargeFiles/
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Mm]emoryCaptures/
+
+
+# Maarten Files:
+*.snap
+*.ccProject
+Trauma/Library/ArtifactDB
+Trauma/Library/SourceAssetDB
+
+# Wwise
+.cache
+*.akd
+*.prof
+*.validationcache
+*.wsettings
+# *.wem
+
+Trauma/Assets/Wwise/Editor/ProjectData/AkWwiseProjectData.asset
+Trauma/Assets/Wwise/Editor/ProjectData/AkWwiseProjectData.asset.meta
+
+Trauma/Trauma_WwiseProject/GeneratedSoundBanks/
+
+Trauma/Trauma_WwiseProject/GeneratedSoundBanks/Android/SoundbanksInfo.xml
+Trauma/Trauma_WwiseProject/GeneratedSoundBanks/Mac/SoundbanksInfo.xml
+Trauma/Trauma_WwiseProject/GeneratedSoundBanks/Windows/SoundbanksInfo.xml
+
+Trauma/Trauma_WwiseProject/GeneratedSoundBanks/Android/PluginInfo.xml
+Trauma/Trauma_WwiseProject/GeneratedSoundBanks/Mac/PluginInfo.xml
+Trauma/Trauma_WwiseProject/GeneratedSoundBanks/Windows/PluginInfo.xml
+
+Trauma/Assets/StreamingAssets/Audio/GeneratedSoundBanks/
+
+Trauma/UserSettings/Layouts/
+
+Trauma/.idea/.idea.Trauma/.idea/workspace.xml
