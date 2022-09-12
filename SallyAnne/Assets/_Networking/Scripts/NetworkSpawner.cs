@@ -1,4 +1,4 @@
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 
 
@@ -26,6 +26,6 @@ public class NetworkSpawner : NetworkBehaviour
             return;
         }
 
-        _networkObject.Spawn();
-    }
+	    _networkObject.Spawn();
+    }	
 }

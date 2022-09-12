@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 /// <summary>
 /// From: https://www.youtube.com/playlist?list=PLQMQNmwN3FvyyeI1-bDcBPmZiSaDMbFTi
@@ -11,5 +11,5 @@ public struct RelayHostData
     public Guid AllocationID;
     public byte[] AllocationIDBytes;
     public byte[] ConnectionData;
-    public byte[] Key;
+	public byte[] Key;
 }
