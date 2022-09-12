@@ -1,22 +1,27 @@
-using System;
 using UnityEngine;
 
 
 public class GrabWithMouse : MonoBehaviour
 {
-    public Camera myCam;
+    [Tooltip("Grabs Main Camera in case it's left empty")]
+    [SerializeField] private Camera m_Camera;
 
     private bool _isDragging;
 
+    private Rigidbody _rigidbody;
+
     private float _startXPos;
     private float _startYPos;
-
-    private Rigidbody _rigidbody;
 
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+
+        if (m_Camera == null)
+        {
+            m_Camera = Camera.main;
+        }
     }
 
 
@@ -33,15 +38,17 @@ public class GrabWithMouse : MonoBehaviour
     {
         var mousePos = Input.mousePosition;
 
-        if (!myCam.orthographic)
+        if (!m_Camera.orthographic)
         {
             mousePos.z = 10;
         }
 
-        mousePos = myCam.ScreenToWorldPoint(mousePos);
+        mousePos = m_Camera.ScreenToWorldPoint(mousePos);
 
-        _startXPos = mousePos.x - transform.localPosition.x;
-        _startYPos = mousePos.y - transform.localPosition.y;
+        var localPos = transform.localPosition;
+
+        _startXPos = mousePos.x - localPos.x;
+        _startYPos = mousePos.y - localPos.y;
 
         _isDragging = true;
     }
@@ -53,18 +60,16 @@ public class GrabWithMouse : MonoBehaviour
     }
 
 
-    public void DragObject()
+    private void DragObject()
     {
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-
         var mousePos = Input.mousePosition;
 
-        if (!myCam.orthographic)
+        if (!m_Camera.orthographic)
         {
             mousePos.z = 10;
         }
 
-        mousePos = myCam.ScreenToWorldPoint(mousePos);
+        mousePos = m_Camera.ScreenToWorldPoint(mousePos);
         transform.localPosition = new Vector3(mousePos.x - _startXPos, mousePos.y - _startYPos, transform.localPosition.z);
 
         _rigidbody.velocity = new Vector3(0, 0, 0);

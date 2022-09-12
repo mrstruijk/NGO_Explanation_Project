@@ -32,11 +32,16 @@ public class RelayManager : MonoBehaviour
             return;
         }
 
-        await SetupRelay();
+        await SetupRelayAS();
     }
 
 
-    public async Task<RelayHostData> SetupRelay()
+    public async void SetupRelay()
+    {
+        await SetupRelayAS();
+    }
+
+    private async Task<RelayHostData> SetupRelayAS()
     {
         Debug.Log($"Relay Server is attempting to start with max connections: {m_maxConnections}");
 
@@ -67,14 +72,13 @@ public class RelayManager : MonoBehaviour
 
         JoinCode = relayHostData.JoinCode;
 
-
         Debug.Log($"Relay Server has been setup. JOIN CODE: {relayHostData.JoinCode}");
 
         return relayHostData;
     }
 
 
-    public async Task<RelayJoinData> JoinRelay(string joinCode)
+    public async Task<RelayJoinData> JoinRelayAS(string joinCode)
     {
         Debug.Log($"Client is attempting to join with code: {joinCode}");
 
@@ -107,7 +111,6 @@ public class RelayManager : MonoBehaviour
         }
 
         Transport.SetRelayServerData(relayJoinData.IPv4Address, relayJoinData.Port, relayJoinData.AllocationIDBytes, relayJoinData.Key, relayJoinData.ConnectionData, relayJoinData.HostConnectionData);
-
 
         Debug.Log("Client Joined");
 

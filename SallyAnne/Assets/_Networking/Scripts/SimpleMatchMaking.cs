@@ -15,8 +15,7 @@ using UnityEngine;
 
 public class SimpleMatchMaking : MonoBehaviour
 {
-    [SerializeField] private GameObject m_lobbyUIButtons;
-    [SerializeField] private GameManager m_gameManager;
+    [SerializeField] private GameObject m_buttons;
     [SerializeField] private int m_maxPlayers = 2;
 
     private Lobby _connectedLobby;
@@ -47,8 +46,7 @@ public class SimpleMatchMaking : MonoBehaviour
             return;
         }
 
-        m_lobbyUIButtons.SetActive(false);
-        m_gameManager.StartGame();
+        m_buttons.SetActive(false);
     }
 
 
@@ -92,7 +90,7 @@ public class SimpleMatchMaking : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log("No lobbies available via QuickJoin");
+            Debug.LogFormat("No lobbies available via QuickJoin, reason: {0}", e);
 
             return null;
         }
