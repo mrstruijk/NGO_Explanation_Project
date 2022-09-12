@@ -16,7 +16,7 @@ public class RelayManager : MonoBehaviour
 {
     [SerializeField] private GameObject m_buttons;
 
-    [SerializeField] private TextMeshProUGUI m_joinCodeInput;
+    [SerializeField] private TMP_InputField m_joinCodeInput;
 
     [SerializeField] private int m_maxPlayers = 2;
 
@@ -34,6 +34,7 @@ public class RelayManager : MonoBehaviour
     {
         await SetupRelayAsync();
         m_buttons.SetActive(false);
+        NetworkManager.Singleton.StartHost();
     }
 
 
@@ -79,12 +80,24 @@ public class RelayManager : MonoBehaviour
         if (string.IsNullOrEmpty(m_joinCodeInput.text))
         {
             Debug.LogError("No joincode has been entered!");
+
             return;
         }
 
-        await JoinRelayAsync(m_joinCodeInput.text);
+        if (m_joinCodeInput.text.Length != 6)
+        {
+            Debug.LogError("Used JoinCode is not 6 characters long");
+
+            return;
+        }
+
+        var joinCode = m_joinCodeInput.text.ToUpper();
+
+        await JoinRelayAsync(joinCode);
 
         m_buttons.SetActive(false);
+
+        NetworkManager.Singleton.StartClient();
     }
 
 

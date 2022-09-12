@@ -45,5 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_buttons: {fileID: 0}
+  m_joinCodeInput: {fileID: 0}
   m_maxPlayers: 2
   JoinCode: 

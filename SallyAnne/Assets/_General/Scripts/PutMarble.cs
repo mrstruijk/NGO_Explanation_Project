@@ -2,9 +2,10 @@ using Unity.Netcode;
 using UnityEngine;
 
 
-public class PutMarble : NetworkBehaviour
+public class PutMarble : MonoBehaviour
 {
     public GameObject Marble;
+
     private ulong _localClientID;
     private NetworkObject _networkObject;
     private Rigidbody _rigidbody;
@@ -14,12 +15,6 @@ public class PutMarble : NetworkBehaviour
     {
         _rigidbody = Marble.GetComponent<Rigidbody>();
         _networkObject = Marble.GetComponent<NetworkObject>();
-    }
-
-
-    public override void OnNetworkSpawn()
-    {
-        _localClientID = NetworkManager.Singleton.LocalClientId;
     }
 
 
@@ -33,24 +28,16 @@ public class PutMarble : NetworkBehaviour
 
         if (!OwnsObject())
         {
-            MakeOwner();
+            MakeOwnerServerRpc();
         }
 
         MovePosition();
     }
 
-    //TODO: Make sure this happens immediately on all clients.
-    private void MovePosition()
-    {
-        Marble.transform.position = transform.position;
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _rigidbody.angularVelocity = new Vector3(0, 0, 0);
-    }
-
 
     private static bool IsConnected()
     {
-        if (NetworkManager.Singleton.IsClient && NetworkManager.Singleton.IsHost && NetworkManager.Singleton.IsServer)
+        if (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
         {
             return true;
         }
@@ -63,13 +50,22 @@ public class PutMarble : NetworkBehaviour
 
     private bool OwnsObject()
     {
-        return _networkObject.OwnerClientId == _localClientID;
+        return _networkObject.OwnerClientId == NetworkManager.Singleton.LocalClientId;
     }
 
-
-    private void MakeOwner()
+    [ServerRpc(RequireOwnership = false)]
+    private void MakeOwnerServerRpc()
     {
         _networkObject.ChangeOwnership(_localClientID);
         Debug.LogFormat("Changed owner to {0}", _localClientID);
+    }
+
+
+    //TODO: Make sure this happens immediately on all clients.
+    private void MovePosition()
+    {
+        Marble.transform.position = transform.position;
+        _rigidbody.velocity = new Vector3(0, 0, 0);
+        _rigidbody.angularVelocity = new Vector3(0, 0, 0);
     }
 }
