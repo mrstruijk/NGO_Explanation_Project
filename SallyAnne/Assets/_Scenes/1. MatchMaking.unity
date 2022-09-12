@@ -1047,6 +1047,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HostJoinUI
       objectReference: {fileID: 0}
+    - target: {fileID: 2771812630609525579, guid: e21b894dcddea40aeb8b6a0c6c5ce91e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2771812630609525583, guid: e21b894dcddea40aeb8b6a0c6c5ce91e,
         type: 3}
       propertyPath: m_Pivot.x
