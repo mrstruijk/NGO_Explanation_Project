@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
@@ -7,14 +8,20 @@ using Unity.Services.Core.Environments;
 using Unity.Services.Relay;
 using UnityEngine;
 
+
 /// <summary>
-/// From: https://www.youtube.com/playlist?list=PLQMQNmwN3FvyyeI1-bDcBPmZiSaDMbFTi
+///     From: https://www.youtube.com/playlist?list=PLQMQNmwN3FvyyeI1-bDcBPmZiSaDMbFTi
 /// </summary>
 public class RelayManager : MonoBehaviour
 {
-    [SerializeField] private bool m_autoStart = false;
+    [SerializeField] private GameObject m_buttons;
 
-    [SerializeField] private int m_maxConnections = 3;
+    [SerializeField] private TextMeshProUGUI m_joinCodeInput;
+
+    [SerializeField] private int m_maxPlayers = 2;
+
+    [Header("Only for showing joinCode, not for editing or entering")]
+    public string JoinCode;
 
     private const string RelayEnvironment = "production";
 
@@ -22,28 +29,17 @@ public class RelayManager : MonoBehaviour
 
     private static UnityTransport Transport => NetworkManager.Singleton.gameObject.GetComponent<UnityTransport>();
 
-    public string JoinCode { get; private set; }
-
-
-    private async void Start()
-    {
-        if (!m_autoStart)
-        {
-            return;
-        }
-
-        await SetupRelayAS();
-    }
-
 
     public async void SetupRelay()
     {
-        await SetupRelayAS();
+        await SetupRelayAsync();
+        m_buttons.SetActive(false);
     }
 
-    private async Task<RelayHostData> SetupRelayAS()
+
+    private async Task<RelayHostData> SetupRelayAsync()
     {
-        Debug.Log($"Relay Server is attempting to start with max connections: {m_maxConnections}");
+        Debug.Log($"Relay Server is attempting to start with max connections: {m_maxPlayers}");
 
         var options = new InitializationOptions().SetEnvironmentName(RelayEnvironment);
 
@@ -54,7 +50,7 @@ public class RelayManager : MonoBehaviour
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
 
-        var allocation = await Relay.Instance.CreateAllocationAsync(m_maxConnections);
+        var allocation = await Relay.Instance.CreateAllocationAsync(m_maxPlayers);
 
         var relayHostData = new RelayHostData
         {
@@ -78,7 +74,21 @@ public class RelayManager : MonoBehaviour
     }
 
 
-    public async Task<RelayJoinData> JoinRelayAS(string joinCode)
+    public async void JoinRelay()
+    {
+        if (string.IsNullOrEmpty(m_joinCodeInput.text))
+        {
+            Debug.LogError("No joincode has been entered!");
+            return;
+        }
+
+        await JoinRelayAsync(m_joinCodeInput.text);
+
+        m_buttons.SetActive(false);
+    }
+
+
+    private async Task<RelayJoinData> JoinRelayAsync(string joinCode)
     {
         Debug.Log($"Client is attempting to join with code: {joinCode}");
 

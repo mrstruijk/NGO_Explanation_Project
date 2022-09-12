@@ -44,5 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d868c5a45500b427e80b15fe12ce6031, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_autoStart: 0
-  m_maxConnections: 3
+  m_buttons: {fileID: 0}
+  m_maxPlayers: 2
+  JoinCode: 
