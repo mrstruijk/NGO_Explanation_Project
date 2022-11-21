@@ -992,11 +992,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1942510429}
-    - target: {fileID: 4191899907381506093, guid: c4608c60c2b9749cfae9abe0eab1d692,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetMarbleTransform
-      objectReference: {fileID: 0}
     - target: {fileID: 4191899907528602368, guid: c4608c60c2b9749cfae9abe0eab1d692,
         type: 3}
       propertyPath: m_Pivot.x
@@ -1117,11 +1112,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1514177859}
-    - target: {fileID: 4191899909091067860, guid: c4608c60c2b9749cfae9abe0eab1d692,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetMarbleTransform
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4608c60c2b9749cfae9abe0eab1d692, type: 3}
 --- !u!1 &4191899907727422156 stripped
