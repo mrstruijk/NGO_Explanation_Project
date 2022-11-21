@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ParrelSync;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
@@ -32,7 +33,10 @@ public class SimpleMatchMaking : MonoBehaviour
 
 
     /// <summary>
-    ///     Trigger via button UI or rightclick on the component
+    ///     Trigger this method via UI or rightclick on the component to call it. 
+    ///     This first checks whether a Lobby already exists via QuickJoinLobby, if it doesn't exist, CreateLobby will
+    ///     create a new Lobby. If a Lobby already exists, QuickJoinLobby will try to connect to it. This way, this one method
+    ///     will handle all network calls.
     /// </summary>
     [ContextMenu(nameof(CreateOrJoinLobby))]
     public async void CreateOrJoinLobby()
@@ -43,6 +47,8 @@ public class SimpleMatchMaking : MonoBehaviour
 
         if (_connectedLobby == null)
         {
+            Debug.LogError("Can neither create new Host, nor connect to other host as a Client. Something has gone terribly wrong.");
+
             return;
         }
 
@@ -54,6 +60,8 @@ public class SimpleMatchMaking : MonoBehaviour
     {
         var options = new InitializationOptions();
 
+        UseParrelSyncProfileName(options);
+
         await UnityServices.InitializeAsync(options);
 
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
@@ -61,6 +69,24 @@ public class SimpleMatchMaking : MonoBehaviour
         _playerId = AuthenticationService.Instance.PlayerId;
 
         Debug.LogFormat("Authenticated: {0}", _playerId);
+    }
+
+
+    /// <summary>
+    ///     When using Parrel Sync the Profile needs to be renamed for each connected device, since Authentication requires all
+    ///     connected devices to be unique. For the project started with ParrelSync the clone's name found in the Clones
+    ///     Manager - Argument section will be used (this is 'client' by default), for the other the name 'Primary' will be
+    ///     used. This is arbitrary, as long as each device has it's own name.
+    ///     From Tarodev: https://youtu.be/fdkvm21Y0xE?t=528
+    /// </summary>
+    /// <param name="options"></param>
+    private static void UseParrelSyncProfileName(InitializationOptions options)
+    {
+#if UNITY_EDITOR
+        var profileName = ClonesManager.IsClone() ? ClonesManager.GetArgument() : "Primary";
+        options.SetProfile(profileName);
+        Debug.LogFormat("Profile name is '{0}'", profileName);
+#endif
     }
 
 
@@ -78,7 +104,7 @@ public class SimpleMatchMaking : MonoBehaviour
 
             Debug.Log(a.Region);
 
-            SetTransformAsClient(a);
+            SetTransportAsClient(a);
 
             Debug.Log("Attempting to start Client");
 
@@ -97,14 +123,21 @@ public class SimpleMatchMaking : MonoBehaviour
     }
 
 
-    private void SetTransformAsClient(JoinAllocation a)
+    private void SetTransportAsClient(JoinAllocation a)
     {
         _transport.SetClientRelayData(a.RelayServer.IpV4, (ushort) a.RelayServer.Port, a.AllocationIdBytes, a.Key, a.ConnectionData, a.HostConnectionData);
 
-        Debug.Log("SetTransformAsClient");
+        Debug.Log("SetTransportAsClient");
     }
 
 
+    /// <summary>
+    ///     Keeps lobby alive for longer than default, to allow late players to connect.
+    ///     By Tarodev: https://youtu.be/fdkvm21Y0xE?t=641
+    /// </summary>
+    /// <param name="lobbyId"></param>
+    /// <param name="waitTime"></param>
+    /// <returns></returns>
     private static IEnumerator HeartBeatLobbyKeepAlive(string lobbyId, float waitTime)
     {
         var delay = new WaitForSecondsRealtime(waitTime);
@@ -112,7 +145,7 @@ public class SimpleMatchMaking : MonoBehaviour
         while (true)
         {
             Lobbies.Instance.SendHeartbeatPingAsync(lobbyId);
-            Debug.Log("A a a a, staying alive, staying alive");
+            Debug.Log("HeartBeat keep Lobby alive");
 
             yield return delay;
         }
@@ -171,10 +204,12 @@ public class SimpleMatchMaking : MonoBehaviour
             if (_connectedLobby.HostId == _playerId)
             {
                 Lobbies.Instance.DeleteLobbyAsync(_connectedLobby.Id);
+                Debug.Log("Deleted lobby succesfully");
             }
             else
             {
                 Lobbies.Instance.RemovePlayerAsync(_connectedLobby.Id, _playerId);
+                Debug.Log("Removed player from lobby");
             }
         }
         catch (Exception e)
