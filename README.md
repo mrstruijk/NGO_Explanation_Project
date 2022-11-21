@@ -20,4 +20,6 @@ Login to: https://dashboard.unity3d.com/login?redirectTo=Lw==
         Select Relay [IMG], follow steps to Set up Relay (make sure to hit the switch on page 3)
         Select Lobby [IMG], follow steps to Set up Lobby (make sure to hit the switch on page 3)
 
-        
+Install Parrel Sync: https://github.com/VeriorPies/ParrelSync
+Via Package Manager --> '+' icon --> 'Add Package from git URL' --> https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync
+
