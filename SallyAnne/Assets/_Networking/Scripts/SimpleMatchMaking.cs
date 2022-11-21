@@ -16,7 +16,9 @@ using UnityEngine;
 
 public class SimpleMatchMaking : MonoBehaviour
 {
-    [SerializeField] private GameObject m_buttons;
+    [SerializeField] private GameObject m_playButton;
+    
+    [Tooltip("There is no hard maximum on the max number of players, but anything more than a few dozen will be challenging")] // See also: https://forum.unity.com/threads/maximum-players-connections-in-multiplayer-game-built-on-netcode.1244812/
     [SerializeField] private int m_maxPlayers = 2;
 
     private Lobby _connectedLobby;
@@ -51,8 +53,8 @@ public class SimpleMatchMaking : MonoBehaviour
 
             return;
         }
-
-        m_buttons.SetActive(false);
+        
+        m_playButton.SetActive(false); // This disables the big Play button, allowing participants to interact with the game upon connecting to the Lobby.   
     }
 
 
@@ -78,6 +80,7 @@ public class SimpleMatchMaking : MonoBehaviour
     ///     Manager - Argument section will be used (this is 'client' by default), for the other the name 'Primary' will be
     ///     used. This is arbitrary, as long as each device has it's own name.
     ///     From Tarodev: https://youtu.be/fdkvm21Y0xE?t=528
+    /// See also: https://docs-multiplayer.unity3d.com/netcode/current/tutorials/testing/testing_locally
     /// </summary>
     /// <param name="options"></param>
     private static void UseParrelSyncProfileName(InitializationOptions options)
