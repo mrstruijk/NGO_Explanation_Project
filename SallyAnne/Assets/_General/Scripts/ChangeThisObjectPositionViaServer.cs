@@ -22,50 +22,61 @@ public class ChangeThisObjectPositionViaServer : NetworkBehaviour
 
     public void PutObjectHere(Vector3 newPosition)
     {
-        if (!NetworkObject.IsOwner)
+        if (NetworkObject.IsOwner)
         {
-            MakeMineServerRpc(_networkID, newPosition);
+            OtherClientMovePositionServerRpc(newPosition);
+            LocalMovePosition(newPosition);
         }
-
-        MovePositionServerRpc(newPosition);
-        MovePosition(newPosition);
+        else
+        {
+            MakeMineServerRpc(_networkID);
+            ThisClientMovePositionServerRpc(newPosition);
+        }
     }
 
 
     [ServerRpc(RequireOwnership = false)]
-    private void MakeMineServerRpc(ulong networkID, Vector3 newPosition)
+    private void MakeMineServerRpc(ulong networkID)
     {
         NetworkObject.ChangeOwnership(networkID);
-        MovePositionImmediatelyClientRpc(newPosition);
     }
 
-    
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ThisClientMovePositionServerRpc(Vector3 newPosition)
+    {
+        ThisClientMovePositionClientRpc(newPosition);
+    }
+
+
     [ServerRpc]
-    private void MovePositionServerRpc(Vector3 newPosition)
+    private void OtherClientMovePositionServerRpc(Vector3 newPosition)
     {
-        MovePositionClientRpc(newPosition);
+        OtherClientMovePositionClientRpc(newPosition);
     }
 
 
     [ClientRpc]
-    private void MovePositionClientRpc(Vector3 newPosition)
-    {
-        if (!IsOwner)
-        {
-            MovePosition(newPosition);
-        }
-    }
-
-    [ClientRpc]
-    private void MovePositionImmediatelyClientRpc(Vector3 newPosition)
+    private void ThisClientMovePositionClientRpc(Vector3 newPosition)
     {
         if (IsOwner)
         {
-            MovePosition(newPosition);
+            LocalMovePosition(newPosition);
         }
     }
 
-    private void MovePosition(Vector3 newPosition)
+
+    [ClientRpc]
+    private void OtherClientMovePositionClientRpc(Vector3 newPosition)
+    {
+        if (!IsOwner)
+        {
+            LocalMovePosition(newPosition);
+        }
+    }
+
+
+    private void LocalMovePosition(Vector3 newPosition)
     {
         transform.position = newPosition;
         Debug.LogFormat("Moving to {0}", newPosition);
