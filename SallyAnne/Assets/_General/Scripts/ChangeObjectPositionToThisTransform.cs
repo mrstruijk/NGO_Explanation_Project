@@ -17,6 +17,6 @@ public class ChangeObjectPositionToThisTransform : MonoBehaviour
     /// </summary>
     public void SetObjectToThisTransform()
     {
-        _changeObjectPosition.PutObjectHere(transform);
+        _changeObjectPosition.PutObjectHere(transform.position);
     }
 }

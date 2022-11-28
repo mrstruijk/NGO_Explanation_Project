@@ -1,12 +1,15 @@
+using Unity.Netcode;
 using UnityEngine;
 
 
-public class GrabWithMouse : MonoBehaviour
+public class GrabWithMouse : NetworkBehaviour
 {
     [Tooltip("Grabs Main Camera in case it's left empty")]
     [SerializeField] private Camera m_Camera;
 
     private bool _isDragging;
+    private ulong _networkClientID;
+    private NetworkObject _networkObject;
 
     private Rigidbody _rigidbody;
 
@@ -17,11 +20,18 @@ public class GrabWithMouse : MonoBehaviour
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _networkObject = GetComponent<NetworkObject>();
 
         if (m_Camera == null)
         {
             m_Camera = Camera.main;
         }
+    }
+
+
+    public override void OnNetworkSpawn()
+    {
+        _networkClientID = NetworkManager.Singleton.LocalClientId;
     }
 
 
@@ -51,6 +61,8 @@ public class GrabWithMouse : MonoBehaviour
         _startYPos = mousePos.y - localPos.y;
 
         _isDragging = true;
+
+        Debug.LogFormat("X={0}, Y={1}", _startXPos, _startYPos);
     }
 
 
@@ -70,8 +82,16 @@ public class GrabWithMouse : MonoBehaviour
         }
 
         mousePos = m_Camera.ScreenToWorldPoint(mousePos);
-        transform.localPosition = new Vector3(mousePos.x - _startXPos, mousePos.y - _startYPos, transform.localPosition.z);
+        var newPos = new Vector3(mousePos.x - _startXPos, mousePos.y - _startYPos, transform.localPosition.z);
+        SetPosServerRpc(newPos);
+    }
 
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPosServerRpc(Vector3 newPos)
+    {
+        transform.localPosition = newPos;
         _rigidbody.velocity = new Vector3(0, 0, 0);
+        Debug.LogFormat("We dragged, localPos is now {0}", newPos);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ChangeThisObjectPositionViaServer : NetworkBehaviour
 {
-    private ulong _localClientID;
+    private ulong _networkID;
     private Rigidbody _rigidbody;
 
 
@@ -16,20 +16,56 @@ public class ChangeThisObjectPositionViaServer : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        _localClientID = NetworkManager.Singleton.LocalClientId;
-        Debug.LogWarning(_localClientID);
+        _networkID = NetworkManager.Singleton.LocalClientId;
     }
 
 
-    public void PutObjectHere(Transform newTransform)
+    public void PutObjectHere(Vector3 newPosition)
     {
-        MovePositionServerRpc(newTransform.position);
+        if (!NetworkObject.IsOwner)
+        {
+            MakeMineServerRpc(_networkID, newPosition);
+        }
+
+        MovePositionServerRpc(newPosition);
+        MovePosition(newPosition);
     }
 
 
-    //TODO: Make sure this happens immediately on all clients.
     [ServerRpc(RequireOwnership = false)]
+    private void MakeMineServerRpc(ulong networkID, Vector3 newPosition)
+    {
+        NetworkObject.ChangeOwnership(networkID);
+        MovePositionImmediatelyClientRpc(newPosition);
+    }
+
+    
+    [ServerRpc]
     private void MovePositionServerRpc(Vector3 newPosition)
+    {
+        MovePositionClientRpc(newPosition);
+    }
+
+
+    [ClientRpc]
+    private void MovePositionClientRpc(Vector3 newPosition)
+    {
+        if (!IsOwner)
+        {
+            MovePosition(newPosition);
+        }
+    }
+
+    [ClientRpc]
+    private void MovePositionImmediatelyClientRpc(Vector3 newPosition)
+    {
+        if (IsOwner)
+        {
+            MovePosition(newPosition);
+        }
+    }
+
+    private void MovePosition(Vector3 newPosition)
     {
         transform.position = newPosition;
         Debug.LogFormat("Moving to {0}", newPosition);

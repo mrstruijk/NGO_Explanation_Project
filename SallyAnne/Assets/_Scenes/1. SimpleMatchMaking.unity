@@ -131,7 +131,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2626233070115602961}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &114972555
+--- !u!114 &114972565
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,9 +140,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 114972545}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8ea06bb6e1646d8ad842aff95e270ed, type: 3}
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114972566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114972545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 0
+  Interpolate: 1
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -196,7 +222,7 @@ Camera:
   near clip plane: 0.01
   far clip plane: 10
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 1
   m_Depth: -1
   m_CullingMask:
@@ -894,22 +920,14 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 330585545}
-    - target: {fileID: 2626233070210356630, guid: fbb0b02f44eff46e2bc6d74d3f430a24,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2626233070210356632, guid: fbb0b02f44eff46e2bc6d74d3f430a24,
-        type: 3}
-      propertyPath: PositionThreshold
-      value: 0.0001
-      objectReference: {fileID: 0}
     - target: {fileID: 2626233070210356633, guid: fbb0b02f44eff46e2bc6d74d3f430a24,
         type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2463304819
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5942962716354366868, guid: fbb0b02f44eff46e2bc6d74d3f430a24, type: 3}
+    - {fileID: 2626233070210356632, guid: fbb0b02f44eff46e2bc6d74d3f430a24, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: fbb0b02f44eff46e2bc6d74d3f430a24, type: 3}
 --- !u!1001 &3408256977968682814
 PrefabInstance:
