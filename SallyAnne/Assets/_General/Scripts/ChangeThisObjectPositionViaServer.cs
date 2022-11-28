@@ -4,41 +4,36 @@ using UnityEngine;
 
 public class ChangeThisObjectPositionViaServer : NetworkBehaviour
 {
-    private ulong _networkID;
-    private Rigidbody _rigidbody;
-
+    [SerializeField] private OwnershipManager m_ownershipManager;
+    [SerializeField] private Rigidbody m_rigidbody;
+    [SerializeField] private Transform m_objectToMove;
 
     private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody>();
-    }
+        if (m_ownershipManager == null)
+        {
+            m_ownershipManager = FindObjectOfType<OwnershipManager>();
+        }
 
-
-    public override void OnNetworkSpawn()
-    {
-        _networkID = NetworkManager.Singleton.LocalClientId;
+        if (m_rigidbody == null)
+        {
+            m_rigidbody = GetComponentInParent<Rigidbody>();
+        }
     }
 
 
     public void PutObjectHere(Vector3 newPosition)
     {
-        if (NetworkObject.IsOwner)
+        if (m_ownershipManager.OwnsObject)
         {
             OtherClientMovePositionServerRpc(newPosition);
             LocalMovePosition(newPosition);
         }
         else
         {
-            MakeMineServerRpc(_networkID);
+            m_ownershipManager.ChangeOwner();
             ThisClientMovePositionServerRpc(newPosition);
         }
-    }
-
-
-    [ServerRpc(RequireOwnership = false)]
-    private void MakeMineServerRpc(ulong networkID)
-    {
-        NetworkObject.ChangeOwnership(networkID);
     }
 
 
@@ -49,13 +44,6 @@ public class ChangeThisObjectPositionViaServer : NetworkBehaviour
     }
 
 
-    [ServerRpc]
-    private void OtherClientMovePositionServerRpc(Vector3 newPosition)
-    {
-        OtherClientMovePositionClientRpc(newPosition);
-    }
-
-
     [ClientRpc]
     private void ThisClientMovePositionClientRpc(Vector3 newPosition)
     {
@@ -63,6 +51,13 @@ public class ChangeThisObjectPositionViaServer : NetworkBehaviour
         {
             LocalMovePosition(newPosition);
         }
+    }
+
+
+    [ServerRpc]
+    private void OtherClientMovePositionServerRpc(Vector3 newPosition)
+    {
+        OtherClientMovePositionClientRpc(newPosition);
     }
 
 
@@ -78,10 +73,10 @@ public class ChangeThisObjectPositionViaServer : NetworkBehaviour
 
     private void LocalMovePosition(Vector3 newPosition)
     {
-        transform.position = newPosition;
+        m_objectToMove.position = newPosition;
         Debug.LogFormat("Moving to {0}", newPosition);
 
-        _rigidbody.velocity = new Vector3(0, 0, 0);
-        _rigidbody.angularVelocity = new Vector3(0, 0, 0);
+        m_rigidbody.velocity = new Vector3(0, 0, 0);
+        m_rigidbody.angularVelocity = new Vector3(0, 0, 0);
     }
 }
