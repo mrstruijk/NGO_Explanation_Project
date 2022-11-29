@@ -61,6 +61,7 @@ GameObject:
   - component: {fileID: 2626233070210356633}
   - component: {fileID: 114972565}
   - component: {fileID: 114972566}
+  - component: {fileID: 7047353525523223892}
   m_Layer: 0
   m_Name: Marble
   m_TagString: Untagged
@@ -219,6 +220,18 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
+--- !u!114 &7047353525523223892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2626233070210356624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455073dd5f9e4b89be5964d419f21289, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3226700820401220492
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,7 +241,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7917984946308507815}
-  - component: {fileID: 7896659197957775878}
+  - component: {fileID: 2626233070115602963}
   m_Layer: 0
   m_Name: MoveWithMouse
   m_TagString: Untagged
@@ -251,7 +264,7 @@ Transform:
   m_Father: {fileID: 2626233070210356628}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7896659197957775878
+--- !u!114 &2626233070115602963
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -264,8 +277,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Camera: {fileID: 0}
-  m_rigidbody: {fileID: 2626233070210356631}
-  m_ownershipManager: {fileID: 1331793073}
   m_positionChanger: {fileID: 220497713381954254}
 --- !u!1 &4120792575023248977
 GameObject:
@@ -278,7 +289,7 @@ GameObject:
   - component: {fileID: 4760858417845663191}
   - component: {fileID: 220497713381954254}
   m_Layer: 0
-  m_Name: MoveWithButtons
+  m_Name: ServerAuthorityChangePosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -311,5 +322,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8ea06bb6e1646d8ad842aff95e270ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_objectToMove: {fileID: 2626233070210356628}
   m_ownershipManager: {fileID: 1331793073}
   m_rigidbody: {fileID: 2626233070210356631}

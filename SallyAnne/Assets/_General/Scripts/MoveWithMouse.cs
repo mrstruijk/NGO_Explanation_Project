@@ -1,23 +1,60 @@
 using Unity.Netcode;
 using UnityEngine;
 
-/// <summary>
-/// Currentlyh this needs to be on the main object since MouseDown and MouseUp rely on for instance the collider, i believe
-/// 
-/// </summary>
-public class MoveWithMouse : NetworkBehaviour
-{
-    [Tooltip("Grabs Main Camera in case it's left empty")]
-    [SerializeField] private Camera m_Camera;
 
-    [SerializeField] private Rigidbody m_rigidbody;
-    [SerializeField] private OwnershipManager m_ownershipManager;
-    [SerializeField] private ChangeThisObjectPositionViaServer m_positionChanger;
-    [SerializeField] private Transform m_objectToMove;
+/// <summary>
+///     This class, which implements IRespondToMouse, needs to be in a child gameobject of a MouseHandler script.
+///     If the left mouse button is pressed, it will calculate where the object (from the ServerAuthorityChangePosition
+///     class) should be moved to, and upon release of the button, it will stop making this calculation.
+/// </summary>
+public class MoveWithMouse : NetworkBehaviour, IRespondToMouse
+{
+    [Header("Set in the Inspector or will be found")]
+    [Tooltip("Finds Main Camera in case it's left empty")]
+    [SerializeField] private Camera m_Camera;
+    [Tooltip("Finds this component in case it's left empty")]
+    [SerializeField] private ServerAuthorityChangePosition m_positionChanger;
     private bool _isDragging;
 
     private float _startXPos;
     private float _startYPos;
+
+
+    /// <summary>
+    ///     Upon mouse click, this calculates the starting location of the object.
+    /// </summary>
+    public void OnMouseButtonDown()
+    {
+        if (!m_positionChanger.ObjectToMovePresent())
+        {
+            return;
+        }
+
+        var mousePos = Input.mousePosition;
+
+        if (!m_Camera.orthographic)
+        {
+            mousePos.z = 10;
+        }
+
+        mousePos = m_Camera.ScreenToWorldPoint(mousePos);
+
+        var localPos = m_positionChanger.ObjectToMove.localPosition;
+
+        _startXPos = mousePos.x - localPos.x;
+        _startYPos = mousePos.y - localPos.y;
+
+        _isDragging = true;
+    }
+
+
+    /// <summary>
+    ///     Stop dragging as soon as you de-click the mouse.
+    /// </summary>
+    public void OnMouseButtonUp()
+    {
+        _isDragging = false;
+    }
 
 
     private void Awake()
@@ -27,19 +64,9 @@ public class MoveWithMouse : NetworkBehaviour
             m_Camera = Camera.main;
         }
 
-        if (m_rigidbody == null)
-        {
-            m_rigidbody = GetComponentInParent<Rigidbody>();
-        }
-
-        if (m_ownershipManager == null)
-        {
-            m_ownershipManager = FindObjectOfType<OwnershipManager>();
-        }
-
         if (m_positionChanger == null)
         {
-            m_positionChanger = FindObjectOfType<ChangeThisObjectPositionViaServer>();
+            m_positionChanger = FindObjectOfType<ServerAuthorityChangePosition>();
         }
     }
 
@@ -52,38 +79,18 @@ public class MoveWithMouse : NetworkBehaviour
         }
     }
 
-//TODO: CHange this to be able to operate on child objet
-    private void OnMouseDown()
-    {
-        var mousePos = Input.mousePosition;
 
-        if (!m_Camera.orthographic)
-        {
-            mousePos.z = 10;
-        }
-
-        mousePos = m_Camera.ScreenToWorldPoint(mousePos);
-
-        var localPos = m_objectToMove.localPosition;
-
-        _startXPos = mousePos.x - localPos.x;
-        _startYPos = mousePos.y - localPos.y;
-
-        _isDragging = true;
-
-        Debug.LogFormat("X={0}, Y={1}", _startXPos, _startYPos);
-    }
-
-    
-//TODO: CHange this to be able to operate on child objet
-    private void OnMouseUp()
-    {
-        _isDragging = false;
-    }
-
-
+    /// <summary>
+    ///     This calculates where the object should move to.
+    ///     Currently it will run after mouse click down, and before mouse click up (declick), and runs every frame in Update.
+    /// </summary>
     private void DragObject()
     {
+        if (!m_positionChanger.ObjectToMovePresent())
+        {
+            return;
+        }
+
         var mousePos = Input.mousePosition;
 
         if (!m_Camera.orthographic)
@@ -92,17 +99,15 @@ public class MoveWithMouse : NetworkBehaviour
         }
 
         mousePos = m_Camera.ScreenToWorldPoint(mousePos);
-        var newPos = new Vector3(mousePos.x - _startXPos, mousePos.y - _startYPos, m_objectToMove.localPosition.z);
-        
-        m_positionChanger.PutObjectHere(newPos);
+
+        var newPos = new Vector3(mousePos.x - _startXPos, mousePos.y - _startYPos, m_positionChanger.ObjectToMove.localPosition.z);
+
+        NotifyPositionChanger(newPos);
     }
 
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPosServerRpc(Vector3 newPos)
+    private void NotifyPositionChanger(Vector3 newPosition)
     {
-        m_objectToMove.localPosition = newPos;
-        m_rigidbody.velocity = new Vector3(0, 0, 0);
-        Debug.LogFormat("We dragged, localPos is now {0}", newPos);
+        m_positionChanger.PutObjectHere(newPosition);
     }
 }

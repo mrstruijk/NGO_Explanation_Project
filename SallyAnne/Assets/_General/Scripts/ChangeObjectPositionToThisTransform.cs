@@ -1,14 +1,26 @@
 using UnityEngine;
 
 
+/// <summary>
+///     This calls the ServerAuthorityChangePosition script to put the object in that script to the position of the target
+///     in this script.
+/// </summary>
 public class ChangeObjectPositionToThisTransform : MonoBehaviour
 {
-    private ChangeThisObjectPositionViaServer _changeObjectPosition;
+    [Header("Set in the Inspector or this transform will be used")]
+    [SerializeField] private Transform m_target;
+    
+    private ServerAuthorityChangePosition _changeObjectPosition;
 
 
     private void Awake()
     {
-        _changeObjectPosition = FindObjectOfType<ChangeThisObjectPositionViaServer>();
+        if (m_target == null)
+        {
+            m_target = transform;
+        }
+
+        _changeObjectPosition = FindObjectOfType<ServerAuthorityChangePosition>();
     }
 
 
@@ -17,6 +29,6 @@ public class ChangeObjectPositionToThisTransform : MonoBehaviour
     /// </summary>
     public void SetObjectToThisTransform()
     {
-        _changeObjectPosition.PutObjectHere(transform.position);
+        _changeObjectPosition.PutObjectHere(m_target.position);
     }
 }
