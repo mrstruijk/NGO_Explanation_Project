@@ -1,9 +1,11 @@
-# SallyAnne
+# Netcode for GameObjects explanation project
+Under construction.
+A project to help explain and facilitate NGO for use with XR in research and education.
 
+## SallyAnne
+Designed around a loose interpretation of the [Sally Anne test](https://en.wikipedia.org/wiki/Sally%E2%80%93Anne_test)
 
-Loosely based on: https://en.wikipedia.org/wiki/Sally%E2%80%93Anne_test
-
-SallyAnne test is to show networking capabilities between someone wearing an HMD and someone on a tablet
+SallyAnne test is to show networking capabilities between someone wearing an HMD and someone on an Android tablet
 
 See also: https://www.youtube.com/watch?v=fdkvm21Y0xE&t=395s
 Install from Package Manager:
